@@ -161,7 +161,7 @@ pub async fn _register(data: JsonUpcase<RegisterData>, mut conn: DbConn) -> Json
             // Order is important here; the invitation check must come first
             // because the vaultwarden admin can invite anyone, regardless
             // of other signup restrictions.
-            if Invitation::take(&email, &mut conn).await || CONFIG.is_signup_allowed(&email) {
+            if Invitation::take(&email, &mut conn).await || CONFIG.is_signup_allowed(&email) { //:注册功能是可以关闭的
                 User::new(email.clone())
             } else {
                 err!("Registration not allowed or user already exists")
@@ -170,7 +170,7 @@ pub async fn _register(data: JsonUpcase<RegisterData>, mut conn: DbConn) -> Json
     };
 
     // Make sure we don't leave a lingering invitation.
-    Invitation::take(&email, &mut conn).await;
+    Invitation::take(&email, &mut conn).await; //:Invitation 看作一个消费队列, take 处理完了, delete掉
 
     if let Some(client_kdf_type) = data.Kdf {
         user.client_kdf_type = client_kdf_type;
@@ -896,6 +896,7 @@ async fn get_known_device_from_path(email: &str, uuid: &str, mut conn: DbConn) -
 
 #[get("/devices/knowndevice")]
 async fn get_known_device(device: KnownDevice, conn: DbConn) -> JsonResult {
+    debug!("device: {} {}", &device.email, &device.uuid);
     get_known_device_from_path(&device.email, &device.uuid, conn).await
 }
 

@@ -184,7 +184,7 @@ impl User {
         reset_security_stamp: bool,
         allow_next_route: Option<Vec<String>>,
     ) {
-        self.password_hash = crypto::hash_password(password.as_bytes(), &self.salt, self.password_iterations as u32);
+        self.password_hash = crypto::hash_password(password.as_bytes(), &self.salt, self.password_iterations as u32); //:pbkdf2 , salt 是服务端自己随机生成的, 迭代次数来自应用配置, 缺省 600_000
 
         if let Some(route) = allow_next_route {
             self.set_stamp_exception(route);

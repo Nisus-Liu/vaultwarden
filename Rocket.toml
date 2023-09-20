@@ -1,0 +1,4 @@
+# A by LJ
+# 内置两种 profile debug,release
+[debug]
+port = 4000
